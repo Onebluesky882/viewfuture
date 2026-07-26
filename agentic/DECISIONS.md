@@ -125,7 +125,7 @@ If any check is true → block parallel, use sequential automatically.
 **Status:** ACCEPTED
 
 **Context:**
-Greenfield project — personal global stock trend/theme screener. Single user, no payments, no multi-tenant auth.
+Greenfield project — global stock trend/theme screener. Originally single-user personal tool; decision changed 2026-07-27 to open the site publicly (free, no login) so other users can use it, with AI-translated news content to drive visibility. No payments, no multi-tenant auth for this phase.
 
 **Decision:**
 
@@ -135,8 +135,8 @@ Greenfield project — personal global stock trend/theme screener. Single user, 
 | Frontend framework | Next.js (App Router, OpenNext) |
 | Backend | Hono |
 | Database | Cloudflare D1 (SQLite) + Drizzle ORM |
-| Auth | None — single-user personal tool |
-| Data source | Financial Modeling Prep API |
+| Auth | None for this phase — public, free access, no login. Revisit when the product needs per-user state (e.g. saved watchlists) |
+| Data source | Financial Modeling Prep API, Kimi API (news translation) |
 | Deployment | Cloudflare Workers |
 | Package manager | pnpm |
 | Linting/Formatting | Biome |
@@ -146,8 +146,9 @@ Greenfield project — personal global stock trend/theme screener. Single user, 
 
 **Consequences:**
 - All workers must follow this stack — no deviations without Conductor approval
-- No `packages/auth`, `packages/email`, Stripe/R2 — add back only if the project ever moves beyond personal use
+- No `packages/auth`, `packages/email`, Stripe/R2 — add `packages/auth` back only when auth is actually needed (e.g. per-user watchlists); public read access does not require it
 - Theme/sector tagging is maintained manually or via periodic Claude-assisted news summarization — not derived automatically from any API
+- AI-translated news (`news_events`) must always carry a `sourceUrl` to a human-picked, real article — AI's role is translation only, never independent analysis or predictions, to avoid the content being read as investment advice
 
 ⸻
 

@@ -1,10 +1,16 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { health } from './domains/health/health.route';
+import { news } from './domains/news/news.route';
+import { themesRoute } from './domains/themes/themes.route';
+import { watchlist } from './domains/watchlist/watchlist.route';
 
 type Bindings = {
   DB: D1Database;
   FMP_API_KEY: string;
+  KIMI_API: string;
+  KIMI_BASE_URL?: string;
+  KIMI_MODEL?: string;
 };
 
 const app = new Hono<{ Bindings: Bindings }>();
@@ -20,6 +26,9 @@ app.use(
 );
 
 app.route('/health', health);
+app.route('/api/news', news);
+app.route('/api/themes', themesRoute);
+app.route('/api/watchlist', watchlist);
 
 // Add new domains here: app.route('/api/<name>', <name>Router)
 

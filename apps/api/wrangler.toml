@@ -6,8 +6,10 @@ compatibility_flags = ["nodejs_compat"]
 [vars]
 # Secrets — set via: wrangler secret put <NAME>
 # FMP_API_KEY
+# KIMI_API
 
 [[d1_databases]]
 binding = "DB"
 database_name = "viewfuture-db"
-database_id = "" # fill in after: wrangler d1 create viewfuture-db
+database_id = "bee5ceea-f146-48dc-9634-bd184b0c149e"
+migrations_dir = "../../packages/db/drizzle"

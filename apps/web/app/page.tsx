@@ -1,3 +1,10 @@
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Dashboard — ViewFuture',
+  description: 'Screener results, theme tags, and watchlist scoring for global stocks.',
+};
+
 export default function DashboardPage() {
   return (
     <main style={{ maxWidth: 1200, margin: '0 auto', padding: '48px 32px' }}>

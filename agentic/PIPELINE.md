@@ -12,6 +12,8 @@ Last Updated: 2026-07-27
 | Stage | Domain | Depends On | Status |
 |-------|--------|------------|--------|
 | stage-1-setup | root | none | DONE |
+| stage-2-schema-news | db, api, web | stage-1-setup | DONE |
+| stage-3-d1-database | infra | stage-2-schema-news | DONE |
 
 ---
 
@@ -26,18 +28,47 @@ Scaffolded from the mta-trader "gover-agent" template (2026-07-27):
 - `packages/config` (shared tsconfig/Biome), `packages/db` (Drizzle + D1 client, empty schema), `packages/ui` (Button component) ✓
 - `apps/api` — Hono + wrangler.toml, `/health` route only, no D1 database created yet ✓
 - `apps/web` — Next.js shell (layout, navbar, dashboard placeholder page), no auth ✓
-- Dropped from the template: `packages/auth`, `packages/email`, `apps/admin`, Stripe/Resend/R2 wiring — not needed for a personal single-user tool
+- Dropped from the template: `packages/auth`, `packages/email`, `apps/admin`, Stripe/Resend/R2 wiring
 
 See `agentic/gate-out/stage-1-setup.md` for the full scaffold report.
 
-**Not yet started:** screener domain (API), stock/theme/score DB schema, D1 database creation, FMP API key setup.
+---
+
+### stage-2-schema-news — DONE
+
+**Domain:** db, api, web | **Status:** `DONE`
+
+Project direction changed this session: from single-user personal tool → public, free, no-login site, plus an AI news-translation feature.
+
+- D1/Drizzle schema in `packages/db/src/schema/`: `stocks`, `themes` + `theme_stocks`, `fundamental_snapshots`, `screening_runs` + `stock_scores` (fundamental + valuation-percentile approach, peer-group ranked), `news_events` ✓
+- `apps/api` — `news` domain added: `POST /api/news/translate` (calls Kimi API, inserts `draft`), `GET /api/news` (published only), `POST /api/news/:id/publish`; `KIMI_API`/`KIMI_BASE_URL`/`KIMI_MODEL` added to `Bindings` ✓
+- `apps/api/.dev.vars` created (was mistakenly `.env`, which `wrangler dev` does not read); `.dev.vars.example` documents `KIMI_API` ✓
+- `apps/web` — SEO rule added (every page must export its own `metadata`), applied to dashboard page; `DisclaimerFooter` ("not investment advice") added to root layout ✓
+- Upgraded `next` → 16.2.12, confirmed `typescript` → 7.0.2 via `npm info` (Version Policy) ✓
+- `agentic/PROJECT.md`, `ARCHITECTURE.md`, `DECISIONS.md` updated to reflect public/no-auth-for-now decision ✓
+- `pnpm type-check` and `pnpm test` (apps/api) both pass ✓
+- `apps/web` — `/themes` and `/watchlist` pages added (`GET /api/themes`, `GET /api/watchlist` API routes to match), each with back button, SEO metadata, loading/error/empty states; verified in a real headless-Chromium run (screenshots, zero console errors) ✓
+- Fixed a real Next.js 16 + TypeScript 7 incompatibility: `next build` failed until `experimental.useTypeScriptCli: true` was added to `next.config.ts` ✓
+
+**Not yet started:** no real Kimi model/base-URL verified against Moonshot's current API docs, no UI wired to real data (tables are empty), no screener/scoring logic yet.
+
+---
+
+### stage-3-d1-database — DONE
+
+**Domain:** infra | **Status:** `DONE`
+
+- `wrangler d1 create viewfuture-db` — real database created on Cloudflare (region APAC), `database_id` filled into `apps/api/wrangler.toml` ✓
+- `packages/db/drizzle.config.ts` added; `drizzle-kit generate` produced `packages/db/drizzle/0000_naive_lucky_pierre.sql` from the schema (7 tables) ✓
+- `migrations_dir` added to `wrangler.toml`; migration applied to both `--local` (dev) and `--remote` (real production D1) ✓ — verified via `wrangler d1 execute --remote` that all 7 tables exist
+- All tables are empty — no stock/theme/news data loaded yet
 
 ---
 
 ## Next Session Plan
 
-1. Design D1 schema in `packages/db/src/schema/` for: stocks, themes, theme-stock mapping, scores/screening runs
-2. `wrangler d1 create viewfuture-db`, fill `database_id` into `apps/api/wrangler.toml`
-3. Add `screener` domain to `apps/api/src/domains/` (schema/handler/route pattern, see `health` domain for reference)
-4. Sign up for Financial Modeling Prep, `wrangler secret put FMP_API_KEY`
-5. Build out `/watchlist` and `/themes` pages in `apps/web`
+1. Sign up for Financial Modeling Prep, `wrangler secret put FMP_API_KEY`; `wrangler secret put KIMI_API` for deploy
+2. Verify the actual Kimi (Moonshot) model name and base URL against current docs — `kimi-latest` / `https://api.moonshot.ai/v1` in code are placeholders, not confirmed
+3. Add `screener` domain to `apps/api/src/domains/` — computes `fundamental_snapshots` → peer-group valuation percentile → `stock_scores`
+4. Seed initial `stocks` / `themes` data so `/watchlist` and `/themes` have something real to show
+5. Decide when to bring back `packages/auth` (e.g. once per-user watchlists are needed)

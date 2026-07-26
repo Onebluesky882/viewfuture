@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import { DisclaimerFooter } from '@/components/disclaimer-footer';
 import { Navbar } from '@/components/navbar';
 import { QueryProvider } from '@/providers/query-provider';
 
@@ -15,6 +16,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <QueryProvider>
           <Navbar />
           {children}
+          <DisclaimerFooter />
         </QueryProvider>
       </body>
     </html>

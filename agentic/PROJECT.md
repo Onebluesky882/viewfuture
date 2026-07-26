@@ -16,7 +16,7 @@ ViewFuture
 - Frontend: Next.js (Cloudflare Workers via OpenNext)
 - Backend: Hono (Cloudflare Workers)
 - Database: Cloudflare D1 (SQLite) + Drizzle ORM
-- Auth: ไม่มี — เครื่องมือส่วนตัว ผู้ใช้คนเดียว
+- Auth: ไม่มี (ยังไม่ต้อง login ในเฟสนี้) — เปิดสาธารณะให้ทุกคนใช้ได้ฟรี, auth จะเพิ่มในเฟสอนาคต
 - Data source: Financial Modeling Prep API (ราคา, fundamentals, ปันผล)
 - Package manager: pnpm
 - Linting: Biome
@@ -24,7 +24,7 @@ ViewFuture
 - State: TanStack Query
 
 ## Team / Agents
-เจ้าของโปรเจกต์คนเดียว — ใช้งานส่วนตัว ไม่ใช่ผลิตภัณฑ์สาธารณะ
+เจ้าของโปรเจกต์คนเดียว — เปิดเป็นเว็บสาธารณะให้คนอื่นเข้ามาใช้ฟรีได้ (ไม่ต้อง login ในเฟสนี้) มี disclaimer ว่าไม่ใช่คำแนะนำการลงทุน
 
 ## Current Stage
 Greenfield — scaffold จาก mta-trader template เสร็จแล้ว (root config, packages/config, packages/db, packages/ui, apps/api ที่มีแค่ /health, apps/web shell) ยังไม่มี screener logic หรือ DB schema
