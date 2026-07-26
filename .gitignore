@@ -1,0 +1,49 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+
+# Environment
+.env
+.env.local
+.env.production
+.env.development
+
+# Build artifacts (see AGENT_RULES.md Build Artifact Rules)
+node_modules/
+dist/
+build/
+.next/
+target/
+vendor/
+__pycache__/
+.venv/
+
+# Turbo
+.turbo/
+
+# Cloudflare / Wrangler
+.wrangler/
+.open-next/
+.dev.vars
+
+# Vercel / Next.js
+.vercel/
+*.tsbuildinfo
+next-env.d.ts
+
+# Test coverage
+coverage/
+.claude/worktrees/
+
+# Governance: continuously-appended log, not a static doc (see agentic/AGENT_RULES.md)
+agentic/DEV_LOG.md
