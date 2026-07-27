@@ -14,6 +14,7 @@ Last Updated: 2026-07-27
 | stage-1-setup | root | none | DONE |
 | stage-2-schema-news | db, api, web | stage-1-setup | DONE |
 | stage-3-d1-database | infra | stage-2-schema-news | DONE |
+| stage-4-screener | api | stage-3-d1-database | DONE |
 
 ---
 
@@ -65,10 +66,22 @@ Project direction changed this session: from single-user personal tool → publi
 
 ---
 
+### stage-4-screener — DONE
+
+**Domain:** api | **Status:** `DONE`
+
+- `apps/api/src/domains/screener/scoring.ts` — pure, unit-tested peer-group (sector) percentile scoring: valuation (PE/PB, lower=better), fundamental (revenue growth, debt/equity, FCF yield), dividend (yield percentile), weighted into `compositeScore`, globally ranked ✓
+- `apps/api/src/domains/screener/fmp.client.ts` — fetches `quote`, `ratios-ttm`, `key-metrics-ttm`, `financial-growth` from FMP's `/stable` API and normalizes to fundamentals. **Field names are best-effort from FMP's public docs, not confirmed against a live response** — no `FMP_API_KEY` provisioned yet, docs site blocks scraping. Re-verify field casing once a real key exists ✓
+- `apps/api/src/domains/screener/screener.route.ts` — `POST /api/screener/run` (fetches fundamentals for active stocks, upserts `fundamental_snapshots`, computes + inserts `screening_runs`/`stock_scores`), `GET /api/screener/runs`, `GET /api/screener/runs/:id/scores` ✓
+- `scoring.test.ts` (4 tests) + `screener.test.ts` (2 tests) added; `pnpm test` (13 total) and `pnpm type-check` both pass ✓
+- Not yet done: no real FMP key to test against, so `/run` is unverified end-to-end against live data
+
+---
+
 ## Next Session Plan
 
-1. Sign up for Financial Modeling Prep, `wrangler secret put FMP_API_KEY`; `wrangler secret put KIMI_API` for deploy
+1. Sign up for Financial Modeling Prep, `wrangler secret put FMP_API_KEY`; `wrangler secret put KIMI_API` for deploy — then run `POST /api/screener/run` once for real and fix any FMP field-name mismatches in `fmp.client.ts`
 2. Verify the actual Kimi (Moonshot) model name and base URL against current docs — `kimi-latest` / `https://api.moonshot.ai/v1` in code are placeholders, not confirmed
-3. Add `screener` domain to `apps/api/src/domains/` — computes `fundamental_snapshots` → peer-group valuation percentile → `stock_scores`
-4. Seed initial `stocks` / `themes` data so `/watchlist` and `/themes` have something real to show
+3. Seed initial `stocks` / `themes` data so `/watchlist`, `/themes`, and the screener have something real to run against
+4. Wire `apps/web` dashboard to `GET /api/screener/runs/:id/scores` so screening results are visible in the UI
 5. Decide when to bring back `packages/auth` (e.g. once per-user watchlists are needed)
